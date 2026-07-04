@@ -1,4 +1,4 @@
-# frontend-public-revamp
+# Frontsite ESC
 
 Vite + React + TypeScript rebuild of the ESC "Object Writing" public site,
 ported from the Next.js app in [`../esc-front-existing`](../esc-front-existing)
