@@ -92,7 +92,7 @@ const resources = {
         instructionText:
           "Setel pengatur waktu selama 10 menit, lalu lakukan menulis bebas (free-writing) berdasarkan \"Word of The Day\" atau \"Random Word Generator\" hingga waktu habis. Manfaatkan ketujuh indra: lima indra utama (penglihatan, perabaan, pendengaran, penciuman, dan pengecapan), ditambah indra organik (kesadaran akan tubuh Anda) serta indra kinestetik (kesadaran akan gerakan dan hubungan spasial Anda dengan dunia sekitar).",
         creditsText:
-          "erinspirasi dari buku 'Writing Better Lyrics' karya Pat Pattison dan situs objectwriting.com, ruang ini hadir sebagai tempat Anda mengasah kemampuan menulis kreatif.",
+          "Terinspirasi dari buku 'Writing Better Lyrics' karya Pat Pattison dan situs objectwriting.com, ruang ini hadir sebagai tempat Anda mengasah kemampuan menulis kreatif.",
         generate: "Acak",
         findInDictionary: "Cari di kamus",
         dict: {
