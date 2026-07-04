@@ -1,0 +1,25 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Font family CSS variables — previously injected by next/font/google,
+   now backed by the self-hosted @fontsource packages imported in main.tsx. */
+:root {
+  --font-poppins: "Poppins", sans-serif;
+  --font-jakarta-sans: "Plus Jakarta Sans Variable", sans-serif;
+}
+
+html {
+  font-family: "Helvetica Neue", sans-serif !important;
+  padding: 0px !important;
+}
+
+* {
+  outline: none !important;
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
