@@ -1,80 +1,89 @@
-# Frontsite ESC
+# Earhouse Songwriting Club — Frontsite
 
-Vite + React + TypeScript rebuild of the ESC "Object Writing" public site,
-ported from the Next.js app in [`../esc-front-existing`](../esc-front-existing)
-and wired to the KBBI [`../service_api`](../service_api).
+The public web app for **Earhouse Songwriting Club (ESC)** — a bilingual
+(Indonesian 🇮🇩 / English 🇬🇧) songwriting toolkit built around **Object Writing**.
 
-See [`../SDD.md`](../SDD.md) for the migration design & rationale.
+🔗 **Live:** https://earhousesongwritingclub.com
+🔌 **API:** [`dictionary-service`](https://github.com/bryankyuri/dictionary-service) → `https://api-dictionary.earhousesongwritingclub.com`
+
+## Features
+
+- **Object Writing** — "Word of the Day" + random-word prompts and a 10-minute
+  timer for sensory free-writing.
+- **Dictionary** — in-app lookup: KBBI VI (Indonesian) and Open English WordNet
+  (English), with definitions, examples, word class, and etymology.
+- **Spell & Grammar check** (`/check`) — spelling (KBBI / WordNet + SymSpell) plus
+  grammar (Indonesian PUEBI rules; English via LanguageTool).
+- **Rhyme & Synonym finder** (`/rhyme`) — perfect/near rhymes, syllables, and
+  synonyms; phonetic (CMUdict) for English, spelling-based for Indonesian.
+- **Bilingual UI** — ID/EN toggle (react-i18next); content language follows it.
+- **Dark mode**, responsive desktop/mobile layouts.
+
+All language data comes from the backend API — this repo is the frontend only.
 
 ## Stack
 
 - **Build:** Vite 5 + `@vitejs/plugin-react`
-- **UI:** React 18 + TypeScript 5
-- **Styling:** Tailwind CSS 3 + PostCSS (dark mode via `class` + `next-themes`)
-- **Fonts:** self-hosted `@fontsource/poppins` + `@fontsource-variable/plus-jakarta-sans`
-- **Animation:** `motion` (`motion/react`) — same package the reference uses
-- **Misc:** @headlessui/react, react-icons, date-fns
+- **UI:** React 18 + TypeScript 5, `react-router-dom`
+- **Styling:** Tailwind CSS 3 (dark mode via `class`)
+- **i18n:** `react-i18next`
+- **Animation:** `motion` (`motion/react`)
+- **Misc:** `@headlessui/react`, `react-icons`, `date-fns`, self-hosted
+  `@fontsource` fonts
 
-## Scripts
+## Local development
 
 ```bash
-yarn install      # install dependencies
-yarn dev          # start Vite dev server (http://localhost:3000)
-yarn build        # type-check + production build to dist/
-yarn preview      # preview the production build
-yarn lint         # eslint
-yarn type-check
+yarn install
+yarn dev          # Vite dev server on http://localhost:3000
 ```
 
-## API integration
-
-The **"Find it in dictionary"** button (Indonesian) opens an in-app modal that
-fetches definitions from the KBBI service API's `GET /api/kbbi/search?keyword=`
-endpoint. The base URL is configurable:
+Point it at a backend via an env file (see `.env.example`):
 
 ```dotenv
-# .env
-VITE_API_BASE_URL=http://localhost:8001          # local ../service_api (default)
-# VITE_API_BASE_URL=https://api-esc.vloodplein.com  # remote/production API
+# .env  — omit to fall back to http://localhost:8002
+VITE_API_BASE_URL=https://api-dictionary.earhousesongwritingclub.com
 ```
 
-To run the full stack locally: start the API (`cd ../service_api && php artisan
-serve --port=8001`), then `yarn dev` here. The API already sends
-`Access-Control-Allow-Origin: *`, so cross-origin calls work out of the box.
+Other scripts:
 
-The modal tolerates both API schemas — it displays `lema` (remote) or falls back
-to `nama` / `keyword` (local `service_api`), and parses fields that arrive as
-either arrays or JSON strings. English words still open the external Oxford
-dictionary in a new tab.
+```bash
+yarn build        # type-check + production build -> dist/
+yarn preview      # preview the production build
+yarn lint         # eslint
+yarn type-check   # tsc --noEmit
+```
 
-## What changed vs. `esc-front-existing` (Next.js)
+## Routes
 
-- App Router (`app/layout.tsx` + `app/page.tsx`) → SPA entry: `index.html` → `src/main.tsx` → `src/App.tsx`.
-- `next/font/google` → self-hosted `@fontsource` packages (imported in `src/main.tsx`).
-- `next/image` → native `<img>`; `next/link` → native `<a>`.
-- `metadata` export → `<title>`/`<meta>` in `index.html`.
-- Hardcoded dictionary API URL → `VITE_API_BASE_URL` env var.
-- Removed `"use client"` directives and `next.config.mjs`.
-- **Font fix:** the earlier revamp (based on `frontsite`) inherited a
-  `body { font-family: "Helvetica Neue" !important }` rule that overrode Poppins.
-  This build uses `esc-front-existing`'s simpler `globals.css`, so Poppins renders.
+| Path      | Page                                   |
+|-----------|----------------------------------------|
+| `/`       | Object Writing (prompts + timer + dictionary modal) |
+| `/check`  | Spelling & Grammar check               |
+| `/rhyme`  | Rhyme & Synonym finder                 |
+
+## Deployment (Vercel)
+
+Auto-deploys on push to `main`.
+
+- **Framework preset:** Vite · **Build:** `yarn build` · **Output:** `dist`
+- **Environment variable:** `VITE_API_BASE_URL` =
+  `https://api-dictionary.earhousesongwritingclub.com`
+- `vercel.json` rewrites all routes to `index.html` so client-side deep links
+  (`/check`, `/rhyme`) work on refresh.
 
 ## Structure
 
 ```
 src/
 ├── main.tsx              # entry: fonts + globals.css + <App/>
-├── App.tsx               # AppProvider > Providers > Home
-├── globals.css           # Tailwind + theme/font CSS vars
-├── pages/Home.tsx        # Object Writing tool + KBBI dictionary modal (API)
-├── providers/
-│   ├── AppContext.tsx    # screen-width context
-│   └── Providers.tsx     # theme provider + device-type gate + header
-├── components/
-│   ├── Header.tsx        # desktop header + About modal
-│   ├── HeaderMobile.tsx  # mobile header + slide-in menu
-│   └── ThemeSwitch.tsx   # light/dark toggle
-└── data/
-    ├── arrayKBBI.js      # Indonesian word list (from esc-front-existing)
-    └── arrayEN.js        # English word list (from esc-front-existing)
+├── App.tsx               # router: / , /check , /rhyme
+├── i18n.ts               # ID/EN translation resources
+├── pages/
+│   ├── Home.tsx          # Object Writing + dictionary modal + toolkit
+│   ├── Check.tsx         # spelling & grammar checker
+│   └── Rhyme.tsx         # rhyme / synonym / syllable finder
+├── components/           # Header, HeaderMobile, ThemeSwitch
+├── providers/            # AppContext (screen width) + Providers (theme/header)
+└── data/                 # arrayKBBI.js / arrayEN.js (prompt word lists)
 ```
