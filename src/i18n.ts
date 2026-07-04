@@ -57,7 +57,7 @@ const resources = {
       check: {
         title: "Periksa Ejaan & Tata Bahasa",
         subtitle:
-          "Tempel tulisan Anda untuk memeriksa ejaan (KBBI VI) dan tata bahasa.",
+          "Tempel tulisan Anda untuk memeriksa ejaan ({{dict}}) dan tata bahasa.",
         disclaimer:
           "Mendeteksi kesalahan ejaan & tata bahasa yang umum — bukan pengganti penyuntingan yang teliti.",
         placeholder: "Tempel atau ketik teks Anda di sini…",
@@ -179,7 +179,7 @@ const resources = {
       check: {
         title: "Spelling & Grammar Check",
         subtitle:
-          "Paste your writing to check spelling (WordNet) and grammar.",
+          "Paste your writing to check spelling ({{dict}}) and grammar.",
         disclaimer:
           "Catches common spelling & grammar mistakes — not a substitute for careful proofreading.",
         placeholder: "Paste or type your text here…",

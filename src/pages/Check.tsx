@@ -189,7 +189,13 @@ export default function Check() {
               {t("check.title")}
             </h1>
             <p className="text-[14px] opacity-70 dark:text-white mt-1">
-              <RichText text={t("check.subtitle")} />
+              {/* Dictionary name follows the content-language toggle, not the UI
+                  language (KBBI for Indonesian, WordNet for English). */}
+              <RichText
+                text={t("check.subtitle", {
+                  dict: lang === "en" ? "WordNet" : "KBBI VI",
+                })}
+              />
             </p>
             <p className="text-[12px] italic opacity-60 dark:text-white mt-1 flex items-center gap-1.5">
               <span className="w-[16px] h-[16px] shrink-0 flex justify-center items-center rounded-full bg-[#ffc778] dark:text-black not-italic">
