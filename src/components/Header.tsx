@@ -30,7 +30,7 @@ export const Header = () => {
               className="dark:invert"
             />
           </Link>
-          <nav className="flex ml-4">
+          <nav className="flex ml-10">
             {(
               [
                 { to: "/", label: t("nav.objectWriting"), end: true },
@@ -43,10 +43,10 @@ export const Header = () => {
                 to={item.to}
                 end={item.end}
                 className={({ isActive }) =>
-                  `mx-3 pb-1 dark:text-white text-[14px] font-semibold ${
+                  `mx-3 pb-1 dark:text-white text-[14px] font-semibold border-b-4 ${
                     isActive
-                      ? "border-b-2 border-black dark:border-white"
-                      : "border-b-2 border-transparent"
+                      ? "border-black dark:border-white"
+                      : "border-transparent"
                   }`
                 }
               >
@@ -55,7 +55,7 @@ export const Header = () => {
             ))}
           </nav>
           <button
-            className="mx-3 dark:text-white text-[14px] font-semibold"
+            className="mx-3 pb-1 border-b-4 border-transparent dark:text-white text-[14px] font-semibold"
             onClick={() => setShowModalAbout(true)}
           >
             About
