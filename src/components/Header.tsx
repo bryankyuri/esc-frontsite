@@ -61,7 +61,7 @@ export const Header = () => {
             About
           </button>
         </div>
-        <div className="flex items-center">
+        <div className="flex items-center pb-1 border-b-4 border-transparent">
           <div className="flex items-center mx-2 gap-1">
             {(["id", "en"] as const).map((l) => (
               <button

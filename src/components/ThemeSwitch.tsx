@@ -10,36 +10,38 @@ export default function ThemeSwitch() {
     setMounted(true);
   }, []);
 
-  if (!mounted)
+  // Placeholder keeps the same footprint so nothing shifts before hydration.
+  if (!mounted) {
     return (
-      <img
-        src="data:image/svg+xml;base64,PHN2ZyBzdHJva2U9IiNGRkZGRkYiIGZpbGw9IiNGRkZGRkYiIHN0cm9rZS13aWR0aD0iMCIgdmlld0JveD0iMCAwIDI0IDI0IiBoZWlnaHQ9IjIwMHB4IiB3aWR0aD0iMjAwcHgiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjIwIiBoZWlnaHQ9IjIwIiB4PSIyIiB5PSIyIiBmaWxsPSJub25lIiBzdHJva2Utd2lkdGg9IjIiIHJ4PSIyIj48L3JlY3Q+PC9zdmc+Cg=="
-        width={36}
-        height={36}
-        alt="Loading Light/Dark Toggle"
-        title="Loading Light/Dark Toggle"
+      <div
+        className="w-[54px] h-[28px] rounded-full bg-gray-300 dark:bg-white/20"
+        aria-hidden
       />
     );
-
-  if (resolvedTheme === "dark") {
-    return (
-      <button
-        onClick={() => setTheme("light")}
-        className="flex dark:bg-[#ffc778] lg:rounded-[25px] lg:py-[8px] lg:px-[12px] rounded-full p-2 items-center"
-      >
-        <FiSun />
-      </button>
-    );
   }
 
-  if (resolvedTheme === "light") {
-    return (
-      <button
-        onClick={() => setTheme("dark")}
-        className="flex bg-[#121212] text-white lg:rounded-[25px] lg:py-[8px] lg:px-[12px] rounded-full p-2 items-center"
+  const isDark = resolvedTheme === "dark";
+
+  return (
+    <button
+      type="button"
+      role="switch"
+      aria-checked={isDark}
+      aria-label="Toggle dark mode"
+      onClick={() => setTheme(isDark ? "light" : "dark")}
+      className="relative w-[54px] h-[28px] rounded-full transition-colors bg-gray-100 dark:bg-white/20 border dark:border-none"
+    >
+      <span
+        className={`absolute top-[3px] left-[3px] flex h-[22px] w-[22px] items-center justify-center rounded-full bg-[#ffc778] shadow-sm transition-transform duration-200 ${
+          isDark ? "translate-x-[26px]" : "translate-x-0"
+        }`}
       >
-        <FiMoon />
-      </button>
-    );
-  }
+        {isDark ? (
+          <FiMoon className="text-[13px] text-black" />
+        ) : (
+          <FiSun className="text-[13px] text-black" />
+        )}
+      </span>
+    </button>
+  );
 }
