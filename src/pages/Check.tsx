@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { IoSearch } from "react-icons/io5";
 import { GrInfo } from "react-icons/gr";
 import { AppContext } from "@/providers/AppContext";
+import RichText from "@/components/RichText";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "http://localhost:8002";
 
@@ -188,7 +189,7 @@ export default function Check() {
               {t("check.title")}
             </h1>
             <p className="text-[14px] opacity-70 dark:text-white mt-1">
-              {t("check.subtitle")}
+              <RichText text={t("check.subtitle")} />
             </p>
             <p className="text-[12px] italic opacity-60 dark:text-white mt-1 flex items-center gap-1.5">
               <span className="w-[16px] h-[16px] shrink-0 flex justify-center items-center rounded-full bg-[#ffc778] dark:text-black not-italic">
