@@ -126,12 +126,12 @@ export default function Rhyme() {
                 onChange={(e) => setWord(e.target.value.slice(0, 40))}
                 maxLength={40}
                 placeholder={t("rhyme.placeholder")}
-                className="flex-1 px-4 py-3 rounded-lg bg-[#fceba5] dark:bg-[#000] dark:text-white outline-none text-[16px] shadow-sm dark:shadow-[#c2c2c210]"
+                className="flex-1 min-w-0 px-4 py-3 rounded-lg bg-[#fceba5] dark:bg-[#000] dark:text-white outline-none text-[16px] shadow-sm dark:shadow-[#c2c2c210]"
               />
               <button
                 type="submit"
                 disabled={loading || !word.trim()}
-                className="px-5 py-3 rounded-lg bg-[#ffc778] dark:text-black font-bold flex items-center gap-2 disabled:opacity-50"
+                className="shrink-0 px-5 py-3 rounded-lg bg-[#ffc778] dark:text-black font-bold flex items-center gap-2 disabled:opacity-50"
               >
                 <IoSearch />
                 {loading ? t("rhyme.searching") : t("rhyme.button")}

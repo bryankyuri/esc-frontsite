@@ -881,7 +881,13 @@ export default function Home() {
               )}
 
               {/* Scrollable Content Area */}
-              <div className="flex-1 overflow-y-auto">
+              {/* Extra bottom padding on mobile so the last content clears the
+                  browser's bottom navigation bar. */}
+              <div
+                className={`flex-1 overflow-y-auto ${
+                  isDesktop ? "" : "pb-28"
+                }`}
+              >
                 {isLoadingDictionary ? (
                   <div className="flex items-center justify-center p-12">
                     <div className="text-center">
