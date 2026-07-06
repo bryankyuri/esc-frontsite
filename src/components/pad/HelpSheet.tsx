@@ -45,15 +45,38 @@ export function HelpSheet({
       <div className={`chordpad cp-help ${isDesktop ? "" : "full"}`}>
         <div className="cp-help-head">
           <div className="cp-brand">
-            <span className="mk">How to use</span>
-            <span className="sub">Chord Pad</span>
+            <span className="mk">Chord Pad</span>
           </div>
-          <button className="cp-help-close" onClick={onClose} aria-label="Close">
+          <button
+            className="cp-help-close"
+            onClick={onClose}
+            aria-label="Close"
+          >
             <IoCloseOutline />
           </button>
         </div>
-
+        
         <div className="cp-help-body">
+          <div className="cp-help-perf">
+            <b>Performance mode</b>
+            <p>
+              If you hear crackle or lag on an older phone, switch to a lighter
+              mode. Changing this reloads the page.
+            </p>
+            <div className="cp-perf-switch">
+              {PERF_OPTIONS.map((o) => (
+                <button
+                  key={o.id}
+                  className={`cp-perf-pill ${perfMode === o.id ? "current" : ""}`}
+                  onClick={() => perfMode !== o.id && onChangePerfMode(o.id)}
+                >
+                  <span className="t">{o.title}</span>
+                  <span className="p">{o.perf}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+          <div className="w-full my-2">HOW TO USE</div>
           <Row
             title="Power on the sound"
             demo={
@@ -101,7 +124,9 @@ export function HelpSheet({
             title="Instrument"
             demo={
               <div className="cp-seg cp-help-seg">
-                <button className="on" type="button">Piano</button>
+                <button className="on" type="button">
+                  Piano
+                </button>
                 <button type="button">Organ</button>
               </div>
             }
@@ -136,9 +161,9 @@ export function HelpSheet({
               </span>
             }
           >
-            Tap the <b>gear</b> to enter edit mode. Then drag a pad to reorder it,
-            tap <b>✎</b> to change its chord, <b>✕</b> to clear it, or <b>＋</b>{" "}
-            to fill an empty pad. Tap Done when finished.
+            Tap the <b>gear</b> to enter edit mode. Then drag a pad to reorder
+            it, tap <b>✎</b> to change its chord, <b>✕</b> to clear it, or{" "}
+            <b>＋</b> to fill an empty pad. Tap Done when finished.
           </Row>
 
           <Row
@@ -161,9 +186,9 @@ export function HelpSheet({
             }
           >
             Save your board as a preset (up to 10). Use <b>◂ ▸</b> to switch
-            between them and <b>⋯</b> to rename, delete, or start a blank preset.
-            An amber dot on the name means you have unsaved changes. Ten starter
-            progressions come built in.
+            between them and <b>⋯</b> to rename, delete, or start a blank
+            preset. An amber dot on the name means you have unsaved changes. Ten
+            starter progressions come built in.
           </Row>
 
           <Row
@@ -180,35 +205,18 @@ export function HelpSheet({
               </span>
             }
           >
-            Set the tempo (or <b>Tap</b> it), choose a time signature, then keep a
-            plain <b>Click</b> or a drum <b>Groove</b>. It plays in time while you
-            work out the chords.
+            Set the tempo (or <b>Tap</b> it), choose a time signature, then keep
+            a plain <b>Click</b> or a drum <b>Groove</b>. It plays in time while
+            you work out the chords.
           </Row>
 
-          <Row title="Your work is saved" demo={<span className="cp-help-save">✓</span>}>
+          <Row
+            title="Your work is saved"
+            demo={<span className="cp-help-save">✓</span>}
+          >
             Everything is stored on this device automatically and restored when
             you come back — even before you name a preset.
           </Row>
-
-          <div className="cp-help-perf">
-            <b>Performance mode</b>
-            <p>
-              If you hear crackle or lag on an older phone, switch to a lighter
-              mode. Changing this reloads the page.
-            </p>
-            <div className="cp-perf-switch">
-              {PERF_OPTIONS.map((o) => (
-                <button
-                  key={o.id}
-                  className={`cp-perf-pill ${perfMode === o.id ? "current" : ""}`}
-                  onClick={() => perfMode !== o.id && onChangePerfMode(o.id)}
-                >
-                  <span className="t">{o.title}</span>
-                  <span className="p">{o.perf}</span>
-                </button>
-              ))}
-            </div>
-          </div>
         </div>
       </div>
     </div>
