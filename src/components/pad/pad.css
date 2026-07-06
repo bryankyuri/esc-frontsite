@@ -915,6 +915,138 @@
   font-size: 15px;
 }
 
+/* ---- performance-mode picker ---- */
+.cp-perf {
+  width: 100%;
+  max-width: 480px;
+  max-height: 86vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.cp-perf.full {
+  max-width: none;
+  max-height: none;
+  height: 100%;
+  border-radius: 0;
+  border: 0;
+}
+.cp-perf-body {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  padding: 16px 18px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.cp-perf-intro {
+  font-size: 13px;
+  color: var(--silk-dim);
+  line-height: 1.55;
+  margin: 0 0 4px;
+}
+.cp-perf-card {
+  position: relative;
+  text-align: left;
+  background: linear-gradient(var(--panel-hi), var(--panel));
+  border: 1px solid #000;
+  border-radius: 10px;
+  padding: 14px;
+  cursor: pointer;
+}
+.cp-perf-card.current {
+  border-color: rgba(255, 199, 120, 0.55);
+}
+.cp-perf-card-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+}
+.cp-perf-card-head .title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--silk);
+}
+.cp-perf-card-head .perf {
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--amber);
+  white-space: nowrap;
+}
+.cp-perf-card .desc {
+  font-size: 12.5px;
+  color: var(--silk-dim);
+  margin: 6px 0 0;
+  line-height: 1.5;
+}
+.cp-perf-badge {
+  display: inline-block;
+  margin-top: 8px;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #241605;
+  background: var(--amber);
+  border-radius: 999px;
+  padding: 2px 9px;
+}
+
+/* performance switch inside the guide */
+.cp-help-perf {
+  background: linear-gradient(var(--panel-hi), var(--panel));
+  border: 1px solid #000;
+  border-radius: 10px;
+  padding: 13px 14px;
+}
+.cp-help-perf > b {
+  font-size: 14px;
+  color: var(--silk);
+}
+.cp-help-perf > p {
+  font-size: 13px;
+  color: var(--silk-dim);
+  margin: 5px 0 10px;
+  line-height: 1.5;
+}
+.cp-perf-switch {
+  display: flex;
+  gap: 6px;
+}
+.cp-perf-pill {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  align-items: center;
+  background: linear-gradient(#2c2c34, #202027);
+  border: 1px solid #000;
+  border-radius: 8px;
+  padding: 9px 4px;
+  cursor: pointer;
+}
+.cp-perf-pill.current {
+  background: linear-gradient(#4a3413, #35240b);
+}
+.cp-perf-pill .t {
+  font-size: 11px;
+  color: var(--silk);
+  text-align: center;
+}
+.cp-perf-pill.current .t {
+  color: var(--amber);
+}
+.cp-perf-pill .p {
+  font-size: 8px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--silk-dim);
+  text-align: center;
+}
+
 /* ---- metronome ---- */
 .cp-metro-tempo {
   display: flex;

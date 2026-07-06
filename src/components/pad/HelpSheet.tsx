@@ -1,4 +1,5 @@
 import { IoCloseOutline } from "react-icons/io5";
+import { PERF_OPTIONS, type PerfMode } from "@/lib/pad/perfMode";
 
 // A how-to guide. Each row pairs a live copy of the real control with a short
 // explanation, so it's obvious which button the text is talking about.
@@ -25,9 +26,13 @@ function Row({
 
 export function HelpSheet({
   isDesktop,
+  perfMode,
+  onChangePerfMode,
   onClose,
 }: {
   readonly isDesktop: boolean;
+  readonly perfMode: PerfMode | null;
+  readonly onChangePerfMode: (mode: PerfMode) => void;
   readonly onClose: () => void;
 }) {
   return (
@@ -184,6 +189,26 @@ export function HelpSheet({
             Everything is stored on this device automatically and restored when
             you come back — even before you name a preset.
           </Row>
+
+          <div className="cp-help-perf">
+            <b>Performance mode</b>
+            <p>
+              If you hear crackle or lag on an older phone, switch to a lighter
+              mode. Changing this reloads the page.
+            </p>
+            <div className="cp-perf-switch">
+              {PERF_OPTIONS.map((o) => (
+                <button
+                  key={o.id}
+                  className={`cp-perf-pill ${perfMode === o.id ? "current" : ""}`}
+                  onClick={() => perfMode !== o.id && onChangePerfMode(o.id)}
+                >
+                  <span className="t">{o.title}</span>
+                  <span className="p">{o.perf}</span>
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
     </div>

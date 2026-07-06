@@ -30,7 +30,9 @@ import { ChordAssignSheet } from "@/components/pad/ChordAssignSheet";
 import { PresetManager } from "@/components/pad/PresetManager";
 import { Metronome } from "@/components/pad/Metronome";
 import { HelpSheet } from "@/components/pad/HelpSheet";
+import { PerfModePicker } from "@/components/pad/PerfModePicker";
 import { firstGrooveId, groovesFor } from "@/lib/pad/grooves";
+import { loadPerfMode, savePerfMode, type PerfMode } from "@/lib/pad/perfMode";
 import {
   diatonicPads,
   rootName,
@@ -45,6 +47,7 @@ import {
   saveStore,
   MAX_PRESETS,
   PAD_COUNT,
+  type MetronomeState,
   type Preset,
   type WorkingState,
 } from "@/lib/pad/presetStorage";
@@ -87,6 +90,7 @@ export default function Pad() {
   const [assignIndex, setAssignIndex] = useState<number | null>(null);
   const [keyPickerOpen, setKeyPickerOpen] = useState(false);
   const [helpOpen, setHelpOpen] = useState(false);
+  const [perfMode, setPerfMode] = useState<PerfMode | null>(loadPerfMode);
   const [online, setOnline] = useState(
     typeof navigator === "undefined" ? true : navigator.onLine
   );
@@ -222,10 +226,17 @@ export default function Pad() {
     loadPreset(presets[next].id);
   };
 
-  // ----- metronome -----
-  const metro = useMetronome(metronome);
+  // ----- metronome (gated by performance tier) -----
+  const grooveEnabled = perfMode === "full";
+  const metroEnabled = perfMode !== "lite";
 
-  const updateMetro = (partial: Partial<typeof metronome>) => {
+  // In non-full tiers, force the click sound regardless of the saved groove.
+  const effectiveMetro: MetronomeState = grooveEnabled
+    ? metronome
+    : { ...metronome, mode: "click" };
+  const metro = useMetronome(effectiveMetro);
+
+  const updateMetro = (partial: Partial<MetronomeState>) => {
     setMetronome((prev) => {
       const next = { ...prev, ...partial };
       // Keep the selected groove valid for the current time signature.
@@ -237,8 +248,15 @@ export default function Pad() {
   };
 
   const toggleMetro = async () => {
+    if (!metroEnabled) return;
     if (!engine.ready) await engine.unlock();
     metro.toggle();
+  };
+
+  // Switching tier changes the audio graph, so reload for a clean start.
+  const changePerfMode = (m: PerfMode) => {
+    savePerfMode(m);
+    location.reload();
   };
 
   const press = useCallback(
@@ -312,10 +330,35 @@ export default function Pad() {
     };
   }, []);
 
+  // Mobile browsers suspend the audio context when the tab is backgrounded and
+  // it often won't cleanly resume, leaving the pads silent. Rather than fight
+  // it, reload on return once audio has been powered on — the board is
+  // auto-saved, so nothing is lost (you just tap "power on" again).
+  useEffect(() => {
+    const wentAway = { current: false };
+    const onVis = () => {
+      if (document.hidden) {
+        wentAway.current = true;
+      } else if (wentAway.current && engine.ready) {
+        location.reload();
+      }
+    };
+    const onPageShow = (e: PageTransitionEvent) => {
+      if (e.persisted) location.reload();
+    };
+    document.addEventListener("visibilitychange", onVis);
+    window.addEventListener("pageshow", onPageShow);
+    return () => {
+      document.removeEventListener("visibilitychange", onVis);
+      window.removeEventListener("pageshow", onPageShow);
+    };
+  }, [engine.ready]);
+
   // Lock page scroll while a full-cover overlay is up (power-on gate, assign
   // sheet, key picker) so mobile can't scroll the page behind it.
   useEffect(() => {
     const locked =
+      perfMode === null ||
       !engine.ready ||
       assignIndex !== null ||
       keyPickerOpen ||
@@ -329,7 +372,7 @@ export default function Pad() {
       document.body.style.overflow = overflow;
       document.body.style.overscrollBehavior = overscrollBehavior;
     };
-  }, [engine.ready, assignIndex, keyPickerOpen, managerOpen, helpOpen]);
+  }, [perfMode, engine.ready, assignIndex, keyPickerOpen, managerOpen, helpOpen]);
 
   // Physical keyboard: 1..0 play pads (disabled while editing / sheet open).
   useEffect(() => {
@@ -518,12 +561,15 @@ export default function Pad() {
                   onReset={() => setTranspose(0)}
                 />
                 <VolumeModule value={volume} onChange={setVolume} />
-                <Metronome
-                  cfg={metronome}
-                  onChange={updateMetro}
-                  running={metro.running}
-                  onToggle={toggleMetro}
-                />
+                {metroEnabled && (
+                  <Metronome
+                    cfg={effectiveMetro}
+                    grooveEnabled={grooveEnabled}
+                    onChange={updateMetro}
+                    running={metro.running}
+                    onToggle={toggleMetro}
+                  />
+                )}
               </div>
             ) : (
               <div className="cp-rack">
@@ -537,12 +583,15 @@ export default function Pad() {
                   />
                 </div>
                 <VolumeModule value={volume} onChange={setVolume} />
-                <Metronome
-                  cfg={metronome}
-                  onChange={updateMetro}
-                  running={metro.running}
-                  onToggle={toggleMetro}
-                />
+                {metroEnabled && (
+                  <Metronome
+                    cfg={effectiveMetro}
+                    grooveEnabled={grooveEnabled}
+                    onChange={updateMetro}
+                    running={metro.running}
+                    onToggle={toggleMetro}
+                  />
+                )}
               </div>
             )}
 
@@ -632,7 +681,22 @@ export default function Pad() {
       )}
 
       {helpOpen && (
-        <HelpSheet isDesktop={isDesktop} onClose={() => setHelpOpen(false)} />
+        <HelpSheet
+          isDesktop={isDesktop}
+          perfMode={perfMode}
+          onChangePerfMode={changePerfMode}
+          onClose={() => setHelpOpen(false)}
+        />
+      )}
+
+      {perfMode === null && (
+        <PerfModePicker
+          isDesktop={isDesktop}
+          onPick={(m) => {
+            savePerfMode(m);
+            setPerfMode(m);
+          }}
+        />
       )}
 
       {managerOpen && (

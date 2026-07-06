@@ -34,11 +34,13 @@ const BPM_MAX = 240;
 
 export function Metronome({
   cfg,
+  grooveEnabled,
   onChange,
   running,
   onToggle,
 }: {
   readonly cfg: MetronomeState;
+  readonly grooveEnabled: boolean;
   readonly onChange: (partial: Partial<MetronomeState>) => void;
   readonly running: boolean;
   readonly onToggle: () => void;
@@ -116,22 +118,24 @@ export function Metronome({
         ))}
       </div>
 
-      <div className="cp-seg cp-metro-mode">
-        <button
-          className={cfg.mode === "click" ? "on" : ""}
-          onClick={() => onChange({ mode: "click" })}
-        >
-          Click
-        </button>
-        <button
-          className={cfg.mode === "groove" ? "on" : ""}
-          onClick={() => onChange({ mode: "groove" })}
-        >
-          Groove
-        </button>
-      </div>
+      {grooveEnabled && (
+        <div className="cp-seg cp-metro-mode">
+          <button
+            className={cfg.mode === "click" ? "on" : ""}
+            onClick={() => onChange({ mode: "click" })}
+          >
+            Click
+          </button>
+          <button
+            className={cfg.mode === "groove" ? "on" : ""}
+            onClick={() => onChange({ mode: "groove" })}
+          >
+            Groove
+          </button>
+        </div>
+      )}
 
-      {cfg.mode === "groove" && (
+      {grooveEnabled && cfg.mode === "groove" && (
         <div className="cp-stepper cp-metro-groove">
           <button
             className="cp-btn"
