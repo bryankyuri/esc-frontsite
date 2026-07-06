@@ -1,10 +1,32 @@
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   beatsPerBar,
   groovesFor,
   grooveById,
+  onBeatChange,
 } from "@/lib/pad/grooves";
 import type { MetronomeState, TimeSig } from "@/lib/pad/presetStorage";
+
+// Isolated so only the LEDs re-render on each beat — never the whole page.
+function BeatLeds({ running, total }: { readonly running: boolean; readonly total: number }) {
+  const [beat, setBeat] = useState(-1);
+  useEffect(() => onBeatChange((b) => setBeat(b)), []);
+  useEffect(() => {
+    if (!running) setBeat(-1);
+  }, [running]);
+  return (
+    <div className="cp-beats">
+      {Array.from({ length: total }, (_, i) => (
+        <span
+          key={i}
+          className={`cp-beat-led ${i === 0 ? "accent" : ""} ${
+            running && i === beat ? "on" : ""
+          }`}
+        />
+      ))}
+    </div>
+  );
+}
 
 const TIME_SIGS: TimeSig[] = ["2/4", "3/4", "4/4", "6/8"];
 const BPM_MIN = 40;
@@ -14,13 +36,11 @@ export function Metronome({
   cfg,
   onChange,
   running,
-  beat,
   onToggle,
 }: {
   readonly cfg: MetronomeState;
   readonly onChange: (partial: Partial<MetronomeState>) => void;
   readonly running: boolean;
-  readonly beat: number;
   readonly onToggle: () => void;
 }) {
   const tapsRef = useRef<number[]>([]);
@@ -55,7 +75,6 @@ export function Metronome({
   };
 
   const total = beatsPerBar(cfg.timeSig);
-  const dots = Array.from({ length: total }, (_, i) => i);
 
   return (
     <div className="cp-module">
@@ -135,16 +154,7 @@ export function Metronome({
       )}
 
       <div className="cp-metro-run">
-        <div className="cp-beats">
-          {dots.map((i) => (
-            <span
-              key={i}
-              className={`cp-beat-led ${i === 0 ? "accent" : ""} ${
-                running && i === beat ? "on" : ""
-              }`}
-            />
-          ))}
-        </div>
+        <BeatLeds running={running} total={total} />
         <button
           className={`cp-runbtn ${running ? "running" : ""}`}
           onClick={onToggle}

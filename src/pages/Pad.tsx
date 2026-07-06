@@ -1,4 +1,5 @@
 import {
+  memo,
   useCallback,
   useContext,
   useEffect,
@@ -521,7 +522,6 @@ export default function Pad() {
                   cfg={metronome}
                   onChange={updateMetro}
                   running={metro.running}
-                  beat={metro.beat}
                   onToggle={toggleMetro}
                 />
               </div>
@@ -541,7 +541,6 @@ export default function Pad() {
                   cfg={metronome}
                   onChange={updateMetro}
                   running={metro.running}
-                  beat={metro.beat}
                   onToggle={toggleMetro}
                 />
               </div>
@@ -671,7 +670,7 @@ function ChordFace({
   );
 }
 
-function PlayPad({
+const PlayPad = memo(function PlayPad({
   index,
   pad,
   transpose,
@@ -716,7 +715,7 @@ function PlayPad({
       <div className="foot">{active ? "playing" : "hold"}</div>
     </div>
   );
-}
+});
 
 function SortablePad({
   slot,

@@ -51,17 +51,20 @@ export function grooveById(id: string): Groove | undefined {
 let out: Tone.Gain | null = null;
 let kick: Tone.MembraneSynth | null = null;
 let snare: Tone.NoiseSynth | null = null;
-let hat: Tone.MetalSynth | null = null;
+let hat: Tone.NoiseSynth | null = null;
 let click: Tone.Synth | null = null;
 
 function ensureNodes() {
   if (out) return;
-  out = new Tone.Gain(0.9).toDestination();
+  // Drum bus with a limiter so overlapping hits never clip (was distorting on
+  // low-end phones). Everything is intentionally lightweight for weak CPUs.
+  const limiter = new Tone.Limiter(-2).toDestination();
+  out = new Tone.Gain(0.7).connect(limiter);
 
   kick = new Tone.MembraneSynth({
     pitchDecay: 0.03,
-    octaves: 6,
-    envelope: { attack: 0.001, decay: 0.3, sustain: 0, release: 0.1 },
+    octaves: 5,
+    envelope: { attack: 0.001, decay: 0.28, sustain: 0, release: 0.1 },
   }).connect(out);
 
   const snareFilter = new Tone.Filter(1800, "bandpass").connect(out);
@@ -70,27 +73,39 @@ function ensureNodes() {
     envelope: { attack: 0.001, decay: 0.14, sustain: 0 },
   }).connect(snareFilter);
 
-  hat = new Tone.MetalSynth({
-    envelope: { attack: 0.001, decay: 0.05, release: 0.01 },
-    harmonicity: 5.1,
-    modulationIndex: 32,
-    resonance: 4000,
-    octaves: 1.5,
-  }).connect(out);
-  hat.volume.value = -14;
+  // Cheap noise hi-hat (a highpassed noise burst) instead of MetalSynth, which
+  // is one of the heaviest Tone voices and was the main cause of the crackle.
+  const hatFilter = new Tone.Filter(9000, "highpass").connect(out);
+  hat = new Tone.NoiseSynth({
+    noise: { type: "white" },
+    envelope: { attack: 0.001, decay: 0.03, sustain: 0 },
+  }).connect(hatFilter);
+  hat.volume.value = -10;
 
   click = new Tone.Synth({
     oscillator: { type: "triangle" },
     envelope: { attack: 0.001, decay: 0.05, sustain: 0, release: 0.02 },
   }).connect(out);
-  click.volume.value = -4;
+  click.volume.value = -6;
 }
 
 // ----- live config + scheduling -----
 let cfg: MetronomeState = { bpm: 96, timeSig: "4/4", mode: "click", grooveId: "rock" };
 let loop: Tone.Loop | null = null;
 let step = 0;
-let onBeat: ((beat: number, accent: boolean, total: number) => void) | null = null;
+
+// Beat listeners get notified per beat (for the LEDs). Kept out of React page
+// state so only the LED component re-renders — not the whole instrument.
+type BeatListener = (beat: number, total: number) => void;
+const beatListeners = new Set<BeatListener>();
+
+export function onBeatChange(fn: BeatListener): () => void {
+  beatListeners.add(fn);
+  return () => beatListeners.delete(fn);
+}
+function notifyBeat(beat: number, total: number) {
+  for (const fn of beatListeners) fn(beat, total);
+}
 
 function applySwing() {
   const g = grooveById(cfg.grooveId);
@@ -102,10 +117,9 @@ function applySwing() {
 function playGroove(s: number, time: number) {
   const g = grooveById(cfg.grooveId);
   if (!g) return;
-  const accent = s === 0 ? 1 : 0.7;
-  if (g.kick.includes(s)) kick?.triggerAttackRelease("C1", "8n", time, accent);
-  if (g.snare.includes(s)) snare?.triggerAttackRelease("16n", time, accent);
-  if (g.hat.includes(s)) hat?.triggerAttackRelease("C6", "32n", time, s === 0 ? 0.6 : 0.4);
+  if (g.kick.includes(s)) kick?.triggerAttackRelease("C1", "8n", time, s === 0 ? 0.9 : 0.65);
+  if (g.snare.includes(s)) snare?.triggerAttackRelease("16n", time, s === 0 ? 0.6 : 0.45);
+  if (g.hat.includes(s)) hat?.triggerAttackRelease("16n", time, s === 0 ? 0.32 : 0.2);
 }
 
 function playClick(s: number, time: number) {
@@ -114,13 +128,9 @@ function playClick(s: number, time: number) {
   click?.triggerAttackRelease(s === 0 ? "A5" : "A4", "32n", time, s === 0 ? 1 : 0.7);
 }
 
-export function startMetronome(
-  config: MetronomeState,
-  beatCb: (beat: number, accent: boolean, total: number) => void
-) {
+export function startMetronome(config: MetronomeState) {
   ensureNodes();
   cfg = { ...config };
-  onBeat = beatCb;
   step = 0;
   Tone.Transport.bpm.value = cfg.bpm;
   applySwing();
@@ -136,7 +146,7 @@ export function startMetronome(
     if (s % STEPS_PER_BEAT[cfg.timeSig] === 0) {
       const beat = s / STEPS_PER_BEAT[cfg.timeSig];
       const total = beatsPerBar(cfg.timeSig);
-      Tone.Draw.schedule(() => onBeat?.(beat, s === 0, total), time);
+      Tone.Draw.schedule(() => notifyBeat(beat, total), time);
     }
     step = (step + 1) % spb;
   }, "8n").start(0);
@@ -157,7 +167,7 @@ export function stopMetronome() {
   Tone.Transport.stop();
   Tone.Transport.position = 0;
   step = 0;
-  onBeat = null;
+  notifyBeat(-1, 0);
 }
 
 export function isMetronomeRunning(): boolean {

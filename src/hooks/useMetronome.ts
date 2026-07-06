@@ -12,7 +12,6 @@ import type { MetronomeState } from "@/lib/pad/presetStorage";
 
 export function useMetronome(cfg: MetronomeState) {
   const [running, setRunning] = useState(false);
-  const [beat, setBeat] = useState<number>(-1);
 
   const cfgRef = useRef(cfg);
   cfgRef.current = cfg;
@@ -34,8 +33,6 @@ export function useMetronome(cfg: MetronomeState) {
     wakeRef.current = null;
   }, []);
 
-  const onBeat = useCallback((index: number) => setBeat(index), []);
-
   // Live-update the engine when config changes mid-run.
   useEffect(() => {
     if (running) setMetronomeConfig(cfg);
@@ -56,14 +53,13 @@ export function useMetronome(cfg: MetronomeState) {
       stopMetronome();
       releaseWake();
       setRunning(false);
-      setBeat(-1);
     } else {
       await ensureStarted();
-      startMetronome(cfgRef.current, onBeat);
+      startMetronome(cfgRef.current);
       acquireWake();
       setRunning(true);
     }
-  }, [running, onBeat, acquireWake, releaseWake]);
+  }, [running, acquireWake, releaseWake]);
 
   // Stop on unmount.
   useEffect(() => {
@@ -73,5 +69,5 @@ export function useMetronome(cfg: MetronomeState) {
     };
   }, [releaseWake]);
 
-  return useMemo(() => ({ running, beat, toggle }), [running, beat, toggle]);
+  return useMemo(() => ({ running, toggle }), [running, toggle]);
 }

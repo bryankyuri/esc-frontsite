@@ -40,17 +40,18 @@ export async function ensureStarted(): Promise<void> {
     oscillator: { type: "triangle" },
     envelope: { attack: 0.005, decay: 0.35, sustain: 0.35, release: 0.5 },
   }).connect(masterGain);
-  piano.maxPolyphony = 16;
+  piano.maxPolyphony = 12;
 
-  // Drawbar-organ timbre via additive partials; full sustain while held.
+  // Drawbar-organ timbre via a few additive partials. Kept short (4 partials)
+  // so sustained chords stay cheap on low-end phones.
   organ = new Tone.PolySynth(Tone.Synth, {
     oscillator: {
       type: "custom",
-      partials: [1, 0.8, 0, 0.65, 0, 0.45, 0, 0.3],
+      partials: [1, 0.7, 0.4, 0.25],
     },
     envelope: { attack: 0.02, decay: 0.1, sustain: 1, release: 0.3 },
   }).connect(masterGain);
-  organ.maxPolyphony = 16;
+  organ.maxPolyphony = 12;
 
   started = true;
 }
