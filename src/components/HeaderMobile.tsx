@@ -75,6 +75,7 @@ export const HeaderMobile = () => {
                     { to: "/", label: t("nav.objectWriting"), end: true },
                     { to: "/check", label: t("nav.check"), end: false },
                     { to: "/rhyme", label: t("nav.rhyme"), end: false },
+                    // { to: "/pad", label: t("nav.pad"), end: false },
                   ] as const
                 ).map((item) => (
                   <NavLink

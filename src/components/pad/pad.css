@@ -1,0 +1,382 @@
+/* Chord Pad — VST hardware skin. Scoped under .chordpad so it never leaks into
+   the rest of the site. Single-theme dark by design (a plugin window). */
+
+.chordpad {
+  --case: #131317;
+  --panel: #212127;
+  --panel-hi: #26262d;
+  --well: #0e0e12;
+  --silk: #ece7dd;
+  --silk-dim: #8e8b96;
+  --amber: #ffc778;
+  --amber-deep: #e09a35;
+  --pad-a: #2a2a32;
+  --pad-b: #1b1b21;
+
+  font-family: "Bahnschrift", "Arial Narrow", "Segoe UI", sans-serif;
+  color: var(--silk);
+  background: var(--case);
+  border-radius: 14px;
+  border: 1px solid #000;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.07);
+  user-select: none;
+  -webkit-user-select: none;
+  overflow: hidden;
+}
+.chordpad * {
+  box-sizing: border-box;
+}
+
+/* ---- titlebar ---- */
+.cp-titlebar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 18px;
+  border-bottom: 1px solid #000;
+  background: linear-gradient(#2b2b33, #202026);
+}
+.cp-brand {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  white-space: nowrap;
+}
+.cp-brand .mk {
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+.cp-brand .sub {
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--silk-dim);
+}
+.cp-power {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  color: var(--silk-dim);
+}
+.cp-led {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--amber);
+  box-shadow: 0 0 8px 2px rgba(255, 199, 120, 0.55), inset 0 -1px 1px rgba(0, 0, 0, 0.4);
+}
+.cp-led.off {
+  background: #3a3a42;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.7);
+}
+
+/* ---- deck: rack + pad grid ---- */
+.cp-deck {
+  display: flex;
+  gap: 18px;
+  padding: 18px;
+}
+.chordpad.mobile .cp-deck {
+  flex-direction: column;
+  gap: 14px;
+  padding: 14px;
+}
+
+.cp-rack {
+  width: 236px;
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.chordpad.mobile .cp-rack {
+  width: auto;
+}
+.chordpad.mobile .cp-rack-row {
+  display: flex;
+  gap: 10px;
+}
+.chordpad.mobile .cp-rack-row > .cp-module {
+  flex: 1;
+}
+
+.cp-module {
+  background: linear-gradient(var(--panel-hi), var(--panel));
+  border: 1px solid #000;
+  border-radius: 10px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  padding: 12px 14px 14px;
+}
+.cp-mlabel {
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--silk-dim);
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* segmented toggle (instrument) */
+.cp-seg {
+  display: flex;
+  border: 1px solid #000;
+  border-radius: 7px;
+  overflow: hidden;
+}
+.cp-seg button {
+  flex: 1;
+  padding: 9px 0;
+  font: inherit;
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  background: linear-gradient(#2c2c34, #202027);
+  color: var(--silk-dim);
+  border: 0;
+  cursor: pointer;
+}
+.cp-seg button + button {
+  border-left: 1px solid #000;
+}
+.cp-seg button.on {
+  background: linear-gradient(#4a3413, #35240b);
+  color: var(--amber);
+  text-shadow: 0 0 8px rgba(255, 199, 120, 0.5);
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.6);
+}
+
+/* stepper (transpose) */
+.cp-stepper {
+  display: flex;
+  align-items: stretch;
+  gap: 8px;
+}
+.cp-btn {
+  background: linear-gradient(#33333c, #232329);
+  border: 1px solid #000;
+  border-radius: 6px;
+  color: var(--silk);
+  font: inherit;
+  font-size: 16px;
+  line-height: 1;
+  padding: 6px 10px;
+  cursor: pointer;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.08) inset, 0 2px 3px rgba(0, 0, 0, 0.5);
+}
+.cp-btn:active {
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.6);
+}
+.cp-stepper .cp-btn {
+  width: 44px;
+}
+.cp-lcd {
+  background: var(--well);
+  border: 1px solid #000;
+  border-radius: 6px;
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.8);
+  color: var(--amber);
+  text-shadow: 0 0 8px rgba(255, 199, 120, 0.45);
+  font-variant-numeric: tabular-nums;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  flex: 1;
+}
+.cp-lcd .big {
+  font-size: 18px;
+  font-weight: 700;
+}
+.cp-lcd .unit {
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  color: var(--silk-dim);
+  text-shadow: none;
+}
+
+/* fader (volume) */
+.cp-fader-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.cp-range {
+  flex: 1;
+  -webkit-appearance: none;
+  appearance: none;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--well);
+  border: 1px solid #000;
+  cursor: pointer;
+}
+.cp-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 26px;
+  border-radius: 4px;
+  background: linear-gradient(#3b3b44, #26262d);
+  border: 1px solid #000;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+}
+.cp-range::-moz-range-thumb {
+  width: 16px;
+  height: 26px;
+  border-radius: 4px;
+  background: linear-gradient(#3b3b44, #26262d);
+  border: 1px solid #000;
+}
+.cp-fader-row .val {
+  font-size: 11px;
+  color: var(--silk-dim);
+  width: 34px;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---- pad grid ---- */
+.cp-grid {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  grid-auto-rows: 128px;
+  gap: 12px;
+}
+.chordpad.mobile .cp-grid {
+  grid-template-columns: 1fr 1fr;
+  grid-auto-rows: 96px;
+  gap: 11px;
+}
+
+.cp-pad {
+  border-radius: 10px;
+  border: 1px solid #000;
+  background: linear-gradient(160deg, var(--pad-a), var(--pad-b));
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.09),
+    inset 0 -3px 8px rgba(0, 0, 0, 0.35);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 9px 11px;
+  cursor: pointer;
+  touch-action: none;
+  color: var(--silk);
+  transition: transform 0.04s ease, box-shadow 0.04s ease;
+}
+.cp-pad .idx {
+  font-size: 10px;
+  color: var(--silk-dim);
+  letter-spacing: 0.15em;
+  display: flex;
+  justify-content: space-between;
+}
+.cp-pad .chord {
+  text-align: center;
+  font-size: 27px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+.chordpad.mobile .cp-pad .chord {
+  font-size: 24px;
+}
+.cp-pad .chord sup {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--silk-dim);
+}
+.cp-pad .foot {
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  color: var(--silk-dim);
+  text-transform: uppercase;
+  text-align: center;
+}
+.cp-pad.active {
+  background: linear-gradient(160deg, #ffd696, var(--amber-deep));
+  box-shadow: 0 0 22px 2px rgba(255, 199, 120, 0.4), inset 0 2px 10px rgba(0, 0, 0, 0.35);
+  transform: translateY(2px);
+}
+.cp-pad.active .chord {
+  color: #241605;
+}
+.cp-pad.active .chord sup,
+.cp-pad.active .idx,
+.cp-pad.active .foot {
+  color: #5c4318;
+}
+.cp-pad.empty {
+  background: var(--well);
+  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.7);
+  border-style: dashed;
+  border-color: #333;
+  align-items: center;
+  justify-content: center;
+  cursor: default;
+}
+.cp-pad.empty .plus {
+  font-size: 26px;
+  color: #4a4a54;
+}
+.cp-pad.empty .foot {
+  color: #4a4a54;
+}
+
+.cp-pad:focus-visible {
+  outline: 2px solid var(--amber);
+  outline-offset: 2px;
+}
+
+/* ---- unlock overlay ---- */
+.cp-unlock {
+  position: absolute;
+  inset: 0;
+  background: rgba(10, 10, 13, 0.92);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  text-align: center;
+  padding: 24px;
+  z-index: 5;
+}
+.cp-unlock .title {
+  font-size: 20px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.cp-unlock .hint {
+  font-size: 12px;
+  color: var(--silk-dim);
+  max-width: 32ch;
+  line-height: 1.5;
+}
+.cp-power-btn {
+  font: inherit;
+  font-size: 14px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--amber);
+  background: linear-gradient(#4a3413, #35240b);
+  border: 1px solid #000;
+  border-radius: 999px;
+  padding: 14px 34px;
+  cursor: pointer;
+  text-shadow: 0 0 8px rgba(255, 199, 120, 0.5);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.5);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cp-pad {
+    transition: none;
+  }
+}

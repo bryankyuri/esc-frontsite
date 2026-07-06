@@ -8,6 +8,7 @@ const resources = {
         objectWriting: "Object Writing",
         check: "Periksa Ejaan",
         rhyme: "Rima",
+        pad: "Chord Pad",
       },
       about: {
         heading: "Tentang Earhouse Songwriting Club",
@@ -130,6 +131,7 @@ const resources = {
         objectWriting: "Object Writing",
         check: "Spell Check",
         rhyme: "Rhymes",
+        pad: "Chord Pad",
       },
       about: {
         heading: "About Earhouse Songwriting Club",
