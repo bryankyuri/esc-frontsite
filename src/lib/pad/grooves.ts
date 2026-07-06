@@ -110,8 +110,9 @@ function notifyBeat(beat: number, total: number) {
 function applySwing() {
   const g = grooveById(cfg.grooveId);
   const swing = cfg.mode === "groove" && g?.swing ? 0.55 : 0;
-  Tone.Transport.swing = swing;
-  Tone.Transport.swingSubdivision = "8n";
+  const t = Tone.getTransport();
+  t.swing = swing;
+  t.swingSubdivision = "8n";
 }
 
 function playGroove(s: number, time: number) {
@@ -132,7 +133,9 @@ export function startMetronome(config: MetronomeState) {
   ensureNodes();
   cfg = { ...config };
   step = 0;
-  Tone.Transport.bpm.value = cfg.bpm;
+  const transport = Tone.getTransport();
+  const draw = Tone.getDraw();
+  transport.bpm.value = cfg.bpm;
   applySwing();
 
   loop?.dispose();
@@ -146,26 +149,27 @@ export function startMetronome(config: MetronomeState) {
     if (s % STEPS_PER_BEAT[cfg.timeSig] === 0) {
       const beat = s / STEPS_PER_BEAT[cfg.timeSig];
       const total = beatsPerBar(cfg.timeSig);
-      Tone.Draw.schedule(() => notifyBeat(beat, total), time);
+      draw.schedule(() => notifyBeat(beat, total), time);
     }
     step = (step + 1) % spb;
   }, "8n").start(0);
 
-  Tone.Transport.start();
+  transport.start();
 }
 
 /** Update tempo / time-sig / mode / groove without interrupting playback. */
 export function setMetronomeConfig(config: MetronomeState) {
   cfg = { ...config };
-  Tone.Transport.bpm.rampTo(cfg.bpm, 0.05);
+  Tone.getTransport().bpm.rampTo(cfg.bpm, 0.05);
   applySwing();
 }
 
 export function stopMetronome() {
   loop?.dispose();
   loop = null;
-  Tone.Transport.stop();
-  Tone.Transport.position = 0;
+  const transport = Tone.getTransport();
+  transport.stop();
+  transport.position = 0;
   step = 0;
   notifyBeat(-1, 0);
 }
