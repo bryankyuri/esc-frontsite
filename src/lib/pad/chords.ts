@@ -55,6 +55,22 @@ export const QUALITY_LABEL: Record<Quality, string> = {
   "6": "6",
 };
 
+/** Labels for the quality picker chips. */
+export const QUALITY_DISPLAY: Record<Quality, string> = {
+  maj: "Major",
+  min: "Minor",
+  "7": "7",
+  maj7: "maj7",
+  min7: "m7",
+  m7b5: "m7♭5",
+  dim: "dim",
+  aug: "aug",
+  sus2: "sus2",
+  sus4: "sus4",
+  add9: "add9",
+  "6": "6",
+};
+
 /** Human-friendly quality names for the assign picker. */
 export const QUALITY_ORDER: Quality[] = [
   "maj",

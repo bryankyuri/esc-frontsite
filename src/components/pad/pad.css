@@ -74,6 +74,16 @@
   background: #3a3a42;
   box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.7);
 }
+.cp-offline {
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #ffb3b3;
+  background: linear-gradient(#4a2626, #351b1b);
+  border: 1px solid #000;
+  border-radius: 5px;
+  padding: 3px 7px;
+}
 
 /* ---- deck: rack + pad grid ---- */
 .cp-deck {
@@ -375,8 +385,766 @@
   box-shadow: 0 3px 8px rgba(0, 0, 0, 0.5);
 }
 
+/* ---- icon button (gear) ---- */
+.cp-icon-btn {
+  font: inherit;
+  font-size: 15px;
+  line-height: 1;
+  color: var(--silk-dim);
+  background: linear-gradient(#33333c, #232329);
+  border: 1px solid #000;
+  border-radius: 6px;
+  padding: 5px 8px;
+  cursor: pointer;
+}
+.cp-icon-btn.on {
+  color: var(--amber);
+  background: linear-gradient(#4a3413, #35240b);
+  text-shadow: 0 0 8px rgba(255, 199, 120, 0.5);
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.6);
+}
+
+/* ---- preset bar ---- */
+.cp-presetbar {
+  display: flex;
+  align-items: stretch;
+  gap: 8px;
+  padding: 10px 18px;
+  border-bottom: 1px solid #000;
+  background: linear-gradient(#242430, #1d1d24);
+}
+.chordpad.mobile .cp-presetbar {
+  padding: 10px 12px;
+}
+.cp-btn.nav {
+  width: 38px;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.cp-btn:disabled,
+.cp-preset-save:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+.cp-preset-lcd {
+  flex: 1;
+  min-width: 0;
+  background: var(--well);
+  border: 1px solid #000;
+  border-radius: 6px;
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.8);
+  padding: 5px 12px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1px;
+}
+.cp-preset-lcd .name {
+  font-size: 14px;
+  letter-spacing: 0.04em;
+  color: var(--amber);
+  text-shadow: 0 0 8px rgba(255, 199, 120, 0.4);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.cp-preset-lcd .name .dirty {
+  color: #ffd089;
+  font-size: 10px;
+}
+.cp-preset-lcd .slot {
+  font-size: 8.5px;
+  letter-spacing: 0.16em;
+  color: var(--silk-dim);
+}
+.cp-preset-save {
+  font: inherit;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--amber);
+  background: linear-gradient(#4a3413, #35240b);
+  border: 1px solid #000;
+  border-radius: 6px;
+  padding: 0 14px;
+  cursor: pointer;
+  text-shadow: 0 0 8px rgba(255, 199, 120, 0.5);
+  white-space: nowrap;
+}
+
+/* ---- edit toolbar ---- */
+.cp-edittools {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 18px;
+  border-bottom: 1px solid #000;
+  background: linear-gradient(#232329, #1c1c22);
+}
+.chordpad.mobile .cp-edittools {
+  padding: 10px 14px;
+}
+.cp-edittools .hint {
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--silk-dim);
+  margin-right: auto;
+}
+.cp-tool-btn {
+  font: inherit;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--silk);
+  background: linear-gradient(#33333c, #232329);
+  border: 1px solid #000;
+  border-radius: 6px;
+  padding: 7px 12px;
+  cursor: pointer;
+}
+.cp-tool-btn.primary {
+  color: var(--amber);
+  background: linear-gradient(#4a3413, #35240b);
+  text-shadow: 0 0 8px rgba(255, 199, 120, 0.5);
+}
+
+/* ---- edit-mode pad affordances ---- */
+@keyframes cp-wiggle {
+  0%,
+  100% {
+    transform: rotate(-0.6deg);
+  }
+  50% {
+    transform: rotate(0.6deg);
+  }
+}
+.cp-pad.editing {
+  border-color: rgba(255, 199, 120, 0.55);
+  animation: cp-wiggle 0.5s ease-in-out infinite;
+  cursor: pointer;
+}
+.cp-pad.editing.empty {
+  border-color: rgba(255, 199, 120, 0.4);
+}
+.cp-badge {
+  position: absolute;
+  top: -10px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1px solid #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0;
+  z-index: 3;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
+}
+.cp-badge.del {
+  left: -10px;
+  background: linear-gradient(#4a2626, #351b1b);
+  color: #ff9d9d;
+}
+.cp-badge.pen {
+  right: -10px;
+  background: linear-gradient(#4a3413, #35240b);
+  color: var(--amber);
+}
+.cp-grip {
+  position: absolute;
+  bottom: 5px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 3px;
+  padding: 6px 8px;
+  cursor: grab;
+  touch-action: none;
+}
+.cp-grip:active {
+  cursor: grabbing;
+}
+.cp-grip i {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: #6a6a74;
+}
+.cp-pad.dragging {
+  opacity: 0.9;
+  border-color: var(--amber);
+  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.65), 0 0 18px rgba(255, 199, 120, 0.3);
+  animation: none;
+  z-index: 10;
+}
+
+/* ---- assign sheet / key picker ---- */
+.cp-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(6, 6, 9, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 40;
+  padding: 16px;
+}
+.chordpad-sheet {
+  font-family: "Bahnschrift", "Arial Narrow", "Segoe UI", sans-serif;
+  color: #ece7dd;
+  background: linear-gradient(#26262d, #1c1c22);
+  border: 1px solid #000;
+  border-radius: 14px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.55);
+  width: 100%;
+  max-width: 440px;
+  padding: 18px;
+}
+.chordpad-sheet.bottom {
+  align-self: flex-end;
+  max-width: 560px;
+  border-radius: 16px 16px 0 0;
+}
+.cp-backdrop.bottom {
+  align-items: flex-end;
+  padding: 0;
+}
+.cp-sheet-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+.cp-sheet-head .ttl {
+  font-size: 13px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #8e8b96;
+}
+.cp-sheet-close {
+  font: inherit;
+  font-size: 22px;
+  line-height: 1;
+  color: #8e8b96;
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+.cp-preview {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: #0e0e12;
+  border: 1px solid #000;
+  border-radius: 10px;
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.8);
+  padding: 12px 16px;
+  margin-bottom: 16px;
+}
+.cp-preview .big {
+  font-size: 34px;
+  font-weight: 700;
+  color: #ffc778;
+  text-shadow: 0 0 10px rgba(255, 199, 120, 0.4);
+  line-height: 1;
+}
+.cp-preview .sounds {
+  font-size: 11px;
+  color: #8e8b96;
+  letter-spacing: 0.08em;
+}
+.cp-hear {
+  margin-left: auto;
+  font: inherit;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #ffc778;
+  background: linear-gradient(#4a3413, #35240b);
+  border: 1px solid #000;
+  border-radius: 999px;
+  padding: 10px 16px;
+  cursor: pointer;
+  touch-action: none;
+}
+.cp-field {
+  margin-bottom: 14px;
+}
+.cp-field > .lbl {
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #8e8b96;
+  margin-bottom: 8px;
+}
+.cp-chip-grid {
+  display: grid;
+  gap: 6px;
+}
+.cp-chip-grid.roots {
+  grid-template-columns: repeat(6, 1fr);
+}
+.cp-chip-grid.quals {
+  grid-template-columns: repeat(4, 1fr);
+}
+.cp-chip-grid.keys {
+  grid-template-columns: repeat(4, 1fr);
+}
+.cp-chip {
+  font: inherit;
+  font-size: 13px;
+  color: #ece7dd;
+  background: linear-gradient(#2c2c34, #202027);
+  border: 1px solid #000;
+  border-radius: 7px;
+  padding: 10px 0;
+  cursor: pointer;
+  text-align: center;
+}
+.cp-chip.on {
+  color: #ffc778;
+  background: linear-gradient(#4a3413, #35240b);
+  text-shadow: 0 0 8px rgba(255, 199, 120, 0.5);
+}
+.cp-octave {
+  display: flex;
+  border: 1px solid #000;
+  border-radius: 7px;
+  overflow: hidden;
+}
+.cp-octave button {
+  flex: 1;
+  font: inherit;
+  font-size: 13px;
+  padding: 10px 0;
+  color: #8e8b96;
+  background: linear-gradient(#2c2c34, #202027);
+  border: 0;
+  cursor: pointer;
+}
+.cp-octave button + button {
+  border-left: 1px solid #000;
+}
+.cp-octave button.on {
+  color: #ffc778;
+  background: linear-gradient(#4a3413, #35240b);
+}
+.cp-sheet-foot {
+  display: flex;
+  gap: 10px;
+  margin-top: 18px;
+}
+.cp-sheet-foot .save {
+  flex: 1;
+  font: inherit;
+  font-size: 13px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #241605;
+  background: linear-gradient(#ffd696, #e09a35);
+  border: 1px solid #000;
+  border-radius: 8px;
+  padding: 13px 0;
+  cursor: pointer;
+  font-weight: 700;
+}
+.cp-sheet-foot .ghost {
+  font: inherit;
+  font-size: 13px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #ece7dd;
+  background: linear-gradient(#33333c, #232329);
+  border: 1px solid #000;
+  border-radius: 8px;
+  padding: 13px 20px;
+  cursor: pointer;
+}
+
+/* ---- help / how-to ---- */
+.cp-backdrop.full {
+  padding: 0;
+  align-items: stretch;
+  justify-content: stretch;
+}
+.cp-help {
+  width: 100%;
+  max-width: 560px;
+  max-height: 86vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.cp-help.full {
+  max-width: none;
+  max-height: none;
+  height: 100%;
+  border-radius: 0;
+  border: 0;
+}
+.cp-help-head {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px;
+  border-bottom: 1px solid #000;
+  background: linear-gradient(#2b2b33, #202026);
+}
+.cp-help-close {
+  font: inherit;
+  font-size: 30px;
+  line-height: 1;
+  color: var(--silk-dim);
+  background: none;
+  border: 0;
+  cursor: pointer;
+  display: flex;
+}
+.cp-help-body {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  padding: 16px 18px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.cp-help-row {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: linear-gradient(var(--panel-hi), var(--panel));
+  border: 1px solid #000;
+  border-radius: 10px;
+  padding: 13px 14px;
+}
+.cp-help-demo {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  min-height: 34px;
+}
+.cp-help-inline {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--silk-dim);
+}
+.cp-help-text b {
+  font-size: 14px;
+  color: var(--silk);
+}
+.cp-help-text p {
+  font-size: 13px;
+  color: var(--silk-dim);
+  margin: 5px 0 0;
+  line-height: 1.55;
+}
+.cp-help-text p b {
+  font-size: inherit;
+  color: var(--amber);
+}
+/* inline (non-absolute) badges inside the guide */
+.cp-help .cp-badge {
+  position: static;
+}
+.cp-help-pad {
+  width: 66px;
+  height: 54px;
+  border-radius: 8px;
+  border: 1px solid #000;
+  background: linear-gradient(160deg, var(--pad-a), var(--pad-b));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.09), inset 0 -3px 8px rgba(0, 0, 0, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 19px;
+  font-weight: 700;
+  color: var(--silk);
+}
+.cp-help-pad sup {
+  font-size: 11px;
+  color: var(--silk-dim);
+}
+.cp-help-pad.active {
+  background: linear-gradient(160deg, #ffd696, var(--amber-deep));
+  color: #241605;
+}
+.cp-help-seg {
+  width: 170px;
+}
+.cp-help-stepper {
+  width: 190px;
+}
+.cp-key {
+  min-width: 24px;
+  padding: 4px 6px;
+  border-radius: 5px;
+  border: 1px solid #000;
+  background: linear-gradient(#33333c, #232329);
+  color: var(--silk);
+  font-size: 12px;
+  text-align: center;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.08) inset, 0 2px 3px rgba(0, 0, 0, 0.5);
+}
+.cp-help-save {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: linear-gradient(#2f5a34, #204024);
+  border: 1px solid #000;
+  color: #9be3a0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+}
+
+/* ---- metronome ---- */
+.cp-metro-tempo {
+  display: flex;
+  align-items: stretch;
+  gap: 6px;
+}
+.cp-metro-tempo .cp-lcd {
+  flex-direction: column;
+  gap: 0;
+  padding: 4px 0;
+}
+.cp-metro-tempo .cp-lcd .unit {
+  font-size: 8px;
+}
+.cp-tap {
+  font: inherit;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--silk);
+  background: linear-gradient(#33333c, #232329);
+  border: 1px solid #000;
+  border-radius: 6px;
+  padding: 0 12px;
+  cursor: pointer;
+}
+.cp-tap:active {
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.6);
+}
+.cp-metro-sig,
+.cp-metro-mode {
+  margin-top: 8px;
+}
+.cp-metro-groove {
+  margin-top: 8px;
+}
+.cp-metro-groove .groove-name {
+  font-size: 13px;
+  letter-spacing: 0.06em;
+  color: var(--amber);
+  text-shadow: 0 0 8px rgba(255, 199, 120, 0.4);
+}
+.cp-metro-run {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 10px;
+}
+.cp-beats {
+  display: flex;
+  gap: 7px;
+  align-items: center;
+}
+.cp-beat-led {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #3a3a42;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.7);
+  transition: background 0.04s ease, box-shadow 0.04s ease;
+}
+.cp-beat-led.accent {
+  width: 11px;
+  height: 11px;
+}
+.cp-beat-led.on {
+  background: var(--amber);
+  box-shadow: 0 0 8px 2px rgba(255, 199, 120, 0.55);
+}
+.cp-runbtn {
+  font: inherit;
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--amber);
+  background: linear-gradient(#4a3413, #35240b);
+  border: 1px solid #000;
+  border-radius: 6px;
+  padding: 8px 18px;
+  cursor: pointer;
+  text-shadow: 0 0 8px rgba(255, 199, 120, 0.5);
+  white-space: nowrap;
+}
+.cp-runbtn.running {
+  color: #ffb3b3;
+  background: linear-gradient(#4a2626, #351b1b);
+  text-shadow: 0 0 8px rgba(255, 130, 130, 0.4);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cp-beat-led {
+    transition: none;
+  }
+}
+
+/* ---- preset manager ---- */
+.cp-saveas {
+  display: flex;
+  gap: 8px;
+}
+.cp-name-input {
+  flex: 1;
+  min-width: 0;
+  font: inherit;
+  font-size: 14px;
+  color: #ece7dd;
+  background: #0e0e12;
+  border: 1px solid #000;
+  border-radius: 7px;
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.8);
+  padding: 10px 12px;
+  outline: none !important;
+}
+.cp-name-input::placeholder {
+  color: #6a6a74;
+}
+.cp-name-input.flex1 {
+  width: 100%;
+}
+.cp-saveas-btn {
+  font: inherit;
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: #241605;
+  background: linear-gradient(#ffd696, #e09a35);
+  border: 1px solid #000;
+  border-radius: 7px;
+  padding: 0 18px;
+  cursor: pointer;
+}
+.cp-saveas-btn:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+.cp-blank-btn {
+  width: 100%;
+  margin-top: 8px;
+  font: inherit;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  color: #ece7dd;
+  background: linear-gradient(#2c2c34, #202027);
+  border: 1px dashed #4a4a54;
+  border-radius: 7px;
+  padding: 10px 0;
+  cursor: pointer;
+}
+.cp-blank-btn:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+.cp-note-line,
+.cp-empty-line {
+  font-size: 11px;
+  color: var(--silk-dim);
+  margin-top: 8px;
+}
+.cp-preset-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-height: 44vh;
+  overflow-y: auto;
+}
+.cp-preset-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: linear-gradient(#2c2c34, #202027);
+  border: 1px solid #000;
+  border-radius: 8px;
+  padding: 4px 6px 4px 4px;
+}
+.cp-preset-row.current {
+  border-color: rgba(255, 199, 120, 0.5);
+}
+.cp-preset-name {
+  flex: 1;
+  min-width: 0;
+  text-align: left;
+  font: inherit;
+  font-size: 14px;
+  color: #ece7dd;
+  background: none;
+  border: 0;
+  padding: 9px 10px;
+  cursor: pointer;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.cp-preset-name .dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--amber);
+  box-shadow: 0 0 6px rgba(255, 199, 120, 0.6);
+  flex: none;
+}
+.cp-row-btn {
+  font: inherit;
+  font-size: 13px;
+  color: var(--silk-dim);
+  background: linear-gradient(#33333c, #232329);
+  border: 1px solid #000;
+  border-radius: 6px;
+  width: 34px;
+  height: 34px;
+  cursor: pointer;
+  flex: none;
+}
+.cp-row-btn.del {
+  color: #ff9d9d;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .cp-pad {
     transition: none;
+  }
+  .cp-pad.editing {
+    animation: none;
   }
 }

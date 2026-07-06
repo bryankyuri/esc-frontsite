@@ -1,7 +1,7 @@
 // React binding for the Chord Pad audio engine. Exposes the imperative engine
 // plus a `ready` flag and an `unlock` gesture handler (browser autoplay policy).
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import * as engine from "@/lib/pad/audioEngine";
 
 export function useAudioEngine() {
@@ -25,13 +25,19 @@ export function useAudioEngine() {
     };
   }, []);
 
-  return {
-    ready,
-    unlock,
-    noteOn: engine.noteOn,
-    noteOff: engine.noteOff,
-    releaseAll: engine.releaseAll,
-    setInstrument: engine.setInstrument,
-    setVolume: engine.setVolume,
-  };
+  // Stable identity so effects that depend on the engine don't re-run every
+  // render. The imperative methods are module-level and already stable; only
+  // `ready` changes, and then only once.
+  return useMemo(
+    () => ({
+      ready,
+      unlock,
+      noteOn: engine.noteOn,
+      noteOff: engine.noteOff,
+      releaseAll: engine.releaseAll,
+      setInstrument: engine.setInstrument,
+      setVolume: engine.setVolume,
+    }),
+    [ready, unlock]
+  );
 }
