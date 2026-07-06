@@ -29,10 +29,10 @@ function activeSynth(): Tone.PolySynth | null {
 export async function ensureStarted(): Promise<void> {
   if (started) return;
 
-  // Use a larger audio buffer ("playback") so low-end phones don't get render
-  // underruns (the crackle on sustained chords). Costs a little latency, which
-  // is fine for holding chords. Must be set before any node is created.
-  Tone.setContext(new Tone.Context({ latencyHint: "playback", lookAhead: 0.05 }));
+  // "balanced" buffer: a compromise between the default low-latency setting
+  // (snappy pads but crackle on weak CPUs) and "playback" (rock-solid but
+  // laggy). Low lookAhead keeps pad onset tight. Set before any node exists.
+  Tone.setContext(new Tone.Context({ latencyHint: "balanced", lookAhead: 0.03 }));
   await Tone.start();
 
   const limiter = new Tone.Limiter(-1).toDestination();
