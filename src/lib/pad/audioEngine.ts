@@ -28,9 +28,12 @@ function activeSynth(): Tone.PolySynth | null {
  */
 export async function ensureStarted(): Promise<void> {
   if (started) return;
+
+  // Use a larger audio buffer ("playback") so low-end phones don't get render
+  // underruns (the crackle on sustained chords). Costs a little latency, which
+  // is fine for holding chords. Must be set before any node is created.
+  Tone.setContext(new Tone.Context({ latencyHint: "playback", lookAhead: 0.05 }));
   await Tone.start();
-  // Lower lookahead for snappier pad response (default is 0.1s).
-  Tone.getContext().lookAhead = 0.02;
 
   const limiter = new Tone.Limiter(-1).toDestination();
   masterGain = new Tone.Gain(0.72).connect(limiter);
