@@ -54,12 +54,22 @@ let snare: Tone.NoiseSynth | null = null;
 let hat: Tone.NoiseSynth | null = null;
 let click: Tone.Synth | null = null;
 
+// Metronome/drum level, 0–100. Scaled so 100 ≈ 0.9 linear gain (headroom).
+let drumVolume = 80;
+const drumGain = () => (Math.max(0, Math.min(100, drumVolume)) / 100) * 0.9;
+
+/** Set the metronome/groove level. Safe before nodes exist (applied lazily). */
+export function setDrumVolume(percent: number) {
+  drumVolume = percent;
+  out?.gain.rampTo(drumGain(), 0.03);
+}
+
 function ensureNodes() {
   if (out) return;
   // Drum bus with a limiter so overlapping hits never clip (was distorting on
   // low-end phones). Everything is intentionally lightweight for weak CPUs.
   const limiter = new Tone.Limiter(-2).toDestination();
-  out = new Tone.Gain(0.7).connect(limiter);
+  out = new Tone.Gain(drumGain()).connect(limiter);
 
   kick = new Tone.MembraneSynth({
     pitchDecay: 0.03,
@@ -133,6 +143,7 @@ export function startMetronome(config: MetronomeState) {
   ensureNodes();
   cfg = { ...config };
   step = 0;
+  if (cfg.volume != null) setDrumVolume(cfg.volume);
   const transport = Tone.getTransport();
   const draw = Tone.getDraw();
   transport.bpm.value = cfg.bpm;
@@ -160,6 +171,7 @@ export function startMetronome(config: MetronomeState) {
 /** Update tempo / time-sig / mode / groove without interrupting playback. */
 export function setMetronomeConfig(config: MetronomeState) {
   cfg = { ...config };
+  if (cfg.volume != null) setDrumVolume(cfg.volume);
   Tone.getTransport().bpm.rampTo(cfg.bpm, 0.05);
   applySwing();
 }

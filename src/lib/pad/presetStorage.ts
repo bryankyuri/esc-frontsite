@@ -15,6 +15,8 @@ export interface MetronomeState {
   timeSig: TimeSig;
   mode: "click" | "groove";
   grooveId: string;
+  /** Metronome/groove level 0–100. Optional for back-compat; defaults to 80. */
+  volume?: number;
 }
 
 export interface WorkingState {
@@ -59,7 +61,7 @@ export function defaultWorkingState(): WorkingState {
     instrument: "piano",
     transpose: 0,
     volume: 72,
-    metronome: { bpm: 96, timeSig: "4/4", mode: "click", grooveId: "" },
+    metronome: { bpm: 96, timeSig: "4/4", mode: "click", grooveId: "", volume: 80 },
   };
 }
 
@@ -108,7 +110,7 @@ const metro = (
   timeSig: TimeSig,
   mode: "click" | "groove",
   grooveId: string
-): MetronomeState => ({ bpm, timeSig, mode, grooveId });
+): MetronomeState => ({ bpm, timeSig, mode, grooveId, volume: 80 });
 
 export function defaultPresets(): Preset[] {
   return [

@@ -157,6 +157,19 @@ export function Metronome({
         </div>
       )}
 
+      <div className="cp-metro-vol">
+        <span className="lbl">Level</span>
+        <input
+          className="cp-range"
+          type="range"
+          min={0}
+          max={100}
+          value={cfg.volume ?? 80}
+          onChange={(e) => onChange({ volume: Number(e.target.value) })}
+          aria-label="Metronome level"
+        />
+      </div>
+
       <div className="cp-metro-run">
         <BeatLeds running={running} total={total} />
         <button

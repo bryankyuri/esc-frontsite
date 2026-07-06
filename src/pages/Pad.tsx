@@ -455,7 +455,7 @@ export default function Pad() {
 
   return (
     <div
-      className={`${isDesktop ? "" : "px-3"} flex min-h-screen flex-col items-center justify-start`}
+      className={`cp-page ${isDesktop ? "" : "px-3"} flex min-h-screen flex-col items-center justify-start`}
     >
       <div className="w-full max-w-[1000px] mt-[24px] mb-[48px]">
         <div className={`chordpad ${isDesktop ? "desktop" : "mobile"}`}>
