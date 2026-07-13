@@ -5,7 +5,10 @@ import { useTranslation } from "react-i18next";
 import { IoCloseOutline } from "react-icons/io5";
 import { FaInstagram } from "react-icons/fa";
 import { PiLinktreeLogoBold } from "react-icons/pi";
+import { FiExternalLink } from "react-icons/fi";
 import ThemeSwitch from "@/components/ThemeSwitch";
+
+const MEMBER_URL = "https://member.earhousesongwritingclub.com";
 
 const varFadeInOutFullMobile = {
   hidden: { opacity: 0, transition: { duration: 0.2 } },
@@ -36,7 +39,7 @@ export const Header = () => {
                 { to: "/", label: t("nav.objectWriting"), end: true },
                 { to: "/check", label: t("nav.check"), end: false },
                 { to: "/rhyme", label: t("nav.rhyme"), end: false },
-                // { to: "/pad", label: t("nav.pad"), end: false },
+                { to: "/pad", label: t("nav.pad"), end: false },
               ] as const
             ).map((item) => (
               <NavLink
@@ -61,6 +64,15 @@ export const Header = () => {
           >
             About
           </button>
+          <a
+            href={MEMBER_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="ml-3 inline-flex items-center gap-1.5 rounded-full bg-[#ffc778] text-black px-4 py-1.5 text-[13px] font-semibold"
+          >
+            {t("nav.member")}
+            <FiExternalLink className="text-[13px]" />
+          </a>
         </div>
         <div className="flex items-center pb-1 border-b-4 border-transparent">
           <div className="flex items-center mx-2 gap-1">

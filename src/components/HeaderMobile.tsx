@@ -7,6 +7,7 @@ import { IoCloseOutline } from "react-icons/io5";
 import { FaInstagram } from "react-icons/fa";
 import { PiLinktreeLogoBold } from "react-icons/pi";
 import { BsPinAngleFill } from "react-icons/bs";
+import { FiExternalLink } from "react-icons/fi";
 import ThemeSwitch from "@/components/ThemeSwitch";
 
 const varFadeInOutMobile = {
@@ -75,7 +76,7 @@ export const HeaderMobile = () => {
                     { to: "/", label: t("nav.objectWriting"), end: true },
                     { to: "/check", label: t("nav.check"), end: false },
                     { to: "/rhyme", label: t("nav.rhyme"), end: false },
-                    // { to: "/pad", label: t("nav.pad"), end: false },
+                    { to: "/pad", label: t("nav.pad"), end: false },
                   ] as const
                 ).map((item) => (
                   <NavLink
@@ -95,6 +96,16 @@ export const HeaderMobile = () => {
                     )}
                   </NavLink>
                 ))}
+                <a
+                  href="https://member.earhousesongwritingclub.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={() => setShowMenu(false)}
+                  className="text-[22px] font-semibold text-black bg-[#ffc778] rounded-xl px-4 py-2 mt-1 flex items-center justify-between"
+                >
+                  {t("nav.member")}
+                  <FiExternalLink className="text-[20px]" />
+                </a>
                 <div className="flex items-center gap-2 mt-2">
                   {(["id", "en"] as const).map((l) => (
                     <button

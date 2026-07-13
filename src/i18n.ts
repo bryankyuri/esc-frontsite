@@ -9,6 +9,7 @@ const resources = {
         check: "Periksa Ejaan",
         rhyme: "Rima",
         pad: "Chord Pad",
+        member: "Area Anggota",
       },
       about: {
         heading: "Tentang Earhouse Songwriting Club",
@@ -132,6 +133,7 @@ const resources = {
         check: "Spell Check",
         rhyme: "Rhymes",
         pad: "Chord Pad",
+        member: "Member Area",
       },
       about: {
         heading: "About Earhouse Songwriting Club",
