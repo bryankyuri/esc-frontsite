@@ -52,7 +52,7 @@ export const HeaderMobile = () => {
             initial="hidden"
             animate="visible"
             exit="exit"
-            className="w-screen h-screen bg-[#fceba5] fixed left-0 top-0 z-10 pb-8 pt-2 dark:bg-black overflow-y-auto"
+            className="w-screen h-screen bg-[#fceba5] fixed left-0 top-0 z-[90] pb-8 pt-2 dark:bg-black overflow-y-auto"
           >
             <div className="flex px-6 items-center justify-between">
               <img

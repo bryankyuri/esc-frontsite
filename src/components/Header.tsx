@@ -100,7 +100,7 @@ export const Header = () => {
             initial="hidden"
             animate="visible"
             exit="exit"
-            className="w-full p-8 h-screen fixed top-0 left-0 bg-[#000000b0] dark:bg-[#19191970] flex justify-center items-center"
+            className="w-full p-8 h-screen fixed top-0 left-0 z-[100] bg-[#000000b0] dark:bg-[#19191970] flex justify-center items-center"
           >
             <div className="w-full max-w-[500px] shadow-lg px-6 py-8 bg-[#fff0da] dark:bg-black dark:text-white rounded-xl text-left dark:shadow-[#c2c2c240]">
               <div className="flex w-full items-center justify-between  mb-6">
