@@ -8,6 +8,7 @@ import {
   syllableOptions,
   thesaurusOptions,
 } from "@/lib/dictionaryApi";
+import { DictionaryModal } from "@/components/DictionaryModal";
 
 type ApiEnvelope = { data?: Record<string, string[]> };
 
@@ -22,6 +23,8 @@ export default function Rhyme() {
   // what's being typed).
   const [word, setWord] = useState("");
   const [lang, setLang] = useState<"id" | "en">(uiLang);
+  // Word whose definition is shown in the dictionary popup (null = closed).
+  const [dictWord, setDictWord] = useState<string | null>(null);
 
   // Follow the header ID/EN toggle so the rhyme language matches the UI.
   useEffect(() => {
@@ -154,12 +157,12 @@ export default function Rhyme() {
                       title={t("rhyme.perfect")}
                       words={data.perfect}
                       accent
-                      onPick={search}
+                      onPick={setDictWord}
                     />
                     <Section
                       title={t("rhyme.near")}
                       words={data.near}
-                      onPick={search}
+                      onPick={setDictWord}
                     />
                     <Section
                       title={t("rhyme.synonyms")}
@@ -172,6 +175,12 @@ export default function Rhyme() {
               </div>
             )}
       </div>
+
+      <DictionaryModal
+        word={dictWord}
+        lang={lang}
+        onClose={() => setDictWord(null)}
+      />
     </div>
   );
 }
