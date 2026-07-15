@@ -13,12 +13,29 @@ import "@fontsource/poppins/800.css";
 import "@fontsource/poppins/900.css";
 import "@fontsource-variable/plus-jakarta-sans";
 
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
 import App from "./App";
 import "./i18n";
 import "./globals.css";
 
+// Dictionary/rhyme entries barely change — cache aggressively so re-searching
+// a word (or clicking a related word) is instant and hits no network.
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 60 * 60 * 1000, // 1 hour
+      gcTime: 24 * 60 * 60 * 1000,
+      retry: 1,
+      refetchOnWindowFocus: false,
+    },
+  },
+});
+
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
-    <App />
+    <QueryClientProvider client={queryClient}>
+      <App />
+    </QueryClientProvider>
   </React.StrictMode>
 );

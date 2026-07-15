@@ -1,16 +1,15 @@
 import { useContext, useEffect, useState } from "react";
+import { useQueries } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import { IoSearch } from "react-icons/io5";
 import { AppContext } from "@/providers/AppContext";
+import {
+  rhymeOptions,
+  syllableOptions,
+  thesaurusOptions,
+} from "@/lib/dictionaryApi";
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "http://localhost:8002";
-
-interface RhymeData {
-  syllables: string[];
-  perfect: string[];
-  near: string[];
-  synonyms: string[];
-}
+type ApiEnvelope = { data?: Record<string, string[]> };
 
 export default function Rhyme() {
   const { t, i18n } = useTranslation();
@@ -18,52 +17,43 @@ export default function Rhyme() {
   const isDesktop = screenWidth > 1080;
 
   const uiLang = i18n.language === "en" ? "en" : "id";
+  const [input, setInput] = useState("");
+  // The submitted term that actually drives the queries (may differ from
+  // what's being typed).
   const [word, setWord] = useState("");
   const [lang, setLang] = useState<"id" | "en">(uiLang);
-  const [loading, setLoading] = useState(false);
-  const [data, setData] = useState<RhymeData | null>(null);
 
   // Follow the header ID/EN toggle so the rhyme language matches the UI.
   useEffect(() => {
     setLang(uiLang);
   }, [uiLang]);
 
-  const search = async (term: string) => {
+  const enabled = word.trim().length > 0;
+  const [rhyQ, thQ, sylQ] = useQueries({
+    queries: [
+      { ...rhymeOptions(lang, word, 100), enabled },
+      { ...thesaurusOptions(lang, word), enabled },
+      { ...syllableOptions(lang, word), enabled },
+    ],
+  });
+
+  const loading = enabled && (rhyQ.isFetching || thQ.isFetching || sylQ.isFetching);
+  const data = enabled
+    ? {
+        perfect: (rhyQ.data as ApiEnvelope)?.data?.perfect ?? [],
+        near: (rhyQ.data as ApiEnvelope)?.data?.near ?? [],
+        synonyms: (thQ.data as ApiEnvelope)?.data?.synonyms ?? [],
+        syllables: (sylQ.data as ApiEnvelope)?.data?.syllables ?? [],
+      }
+    : null;
+
+  // Submit or click a related word → drives the queries above.
+  const search = (term: string) => {
     const q = term.trim();
     if (!q) return;
+    setInput(q);
     setWord(q);
-    setLoading(true);
-    const w = encodeURIComponent(q);
-    const base = `${API_BASE_URL}/api/${lang === "en" ? "english" : "kbbi"}`;
-    try {
-      const [rhyRes, thRes, sylRes] = await Promise.all([
-        fetch(`${base}/rhyme?word=${w}&limit=100`),
-        fetch(`${base}/thesaurus?word=${w}`),
-        fetch(`${base}/syllable?word=${w}`),
-      ]);
-      const [rhy, th, syl] = await Promise.all([
-        rhyRes.json(),
-        thRes.json(),
-        sylRes.json(),
-      ]);
-      setData({
-        perfect: rhy?.data?.perfect ?? [],
-        near: rhy?.data?.near ?? [],
-        synonyms: th?.data?.synonyms ?? [],
-        syllables: syl?.data?.syllables ?? [],
-      });
-    } catch {
-      setData(null);
-    } finally {
-      setLoading(false);
-    }
   };
-
-  // Re-run the search against the other language's endpoints on toggle.
-  useEffect(() => {
-    if (word.trim()) search(word);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [lang]);
 
   const langBtn = (code: "id" | "en", label: string) => (
     <button
@@ -116,21 +106,21 @@ export default function Rhyme() {
         <form
               onSubmit={(e) => {
                 e.preventDefault();
-                search(word);
+                search(input);
               }}
               className="flex gap-3"
             >
               <input
                 type="text"
-                value={word}
-                onChange={(e) => setWord(e.target.value.slice(0, 40))}
+                value={input}
+                onChange={(e) => setInput(e.target.value.slice(0, 40))}
                 maxLength={40}
                 placeholder={t("rhyme.placeholder")}
                 className="flex-1 min-w-0 px-4 py-3 rounded-lg bg-[#fceba5] dark:bg-[#000] dark:text-white outline-none text-[16px] shadow-sm dark:shadow-[#c2c2c210]"
               />
               <button
                 type="submit"
-                disabled={loading || !word.trim()}
+                disabled={loading || !input.trim()}
                 className="shrink-0 px-5 py-3 rounded-lg bg-[#ffc778] dark:text-black font-bold flex items-center gap-2 disabled:opacity-50"
               >
                 <IoSearch />

@@ -9,9 +9,16 @@ import { format, differenceInDays } from "date-fns";
 import { GoArrowUpRight } from "react-icons/go";
 import { GiPerspectiveDiceSixFacesRandom } from "react-icons/gi";
 import { useTranslation } from "react-i18next";
+import { useQueryClient } from "@tanstack/react-query";
 import { AppContext } from "@/providers/AppContext";
 import { dataKBBI } from "@/data/arrayKBBI";
 import { dataEN } from "@/data/arrayEN";
+import {
+  rhymeOptions,
+  searchOptions,
+  syllableOptions,
+  thesaurusOptions,
+} from "@/lib/dictionaryApi";
 
 // KBBI API base URL — configurable via .env (VITE_API_BASE_URL).
 // Defaults to the local service_api (see ../../service_api).
@@ -146,6 +153,7 @@ const varFadeInOutFullMobile = {
 };
 
 export default function Home() {
+  const queryClient = useQueryClient();
   const START_MINUTES = "10";
   const START_SECOND = "00";
   const START_DURATION = 10;
@@ -259,30 +267,30 @@ export default function Home() {
 
     setIsLoadingDictionary(true);
     setToolkit(null);
-    const w = encodeURIComponent(searchTerm);
     const isEn = language === "English";
-    const base = `${API_BASE_URL}/api/${isEn ? "english" : "kbbi"}`;
+    const lang = isEn ? "en" : "id";
+    const word = searchTerm.trim();
     try {
-      const [dictRes, sylRes, thRes, rhyRes] = await Promise.all([
-        fetch(`${base}/search?keyword=${w}`),
-        fetch(`${base}/syllable?word=${w}`),
-        fetch(`${base}/thesaurus?word=${w}`),
-        fetch(`${base}/rhyme?word=${w}&limit=24`),
+      // Routed through the TanStack cache — repeat lookups (and words already
+      // seen on the Rhyme page) resolve instantly with no network call.
+      const [dict, syl, th, rhy] = await Promise.all([
+        queryClient.fetchQuery(searchOptions(lang, word)),
+        queryClient.fetchQuery(syllableOptions(lang, word)),
+        queryClient.fetchQuery(thesaurusOptions(lang, word)),
+        queryClient.fetchQuery(rhymeOptions(lang, word, 24)),
       ]);
       if (isEn) {
-        setEnglishData((await dictRes.json()) as EnglishApiResponse);
+        setEnglishData(dict as EnglishApiResponse);
       } else {
-        setDictionaryData((await dictRes.json()) as KbbiApiResponse);
+        setDictionaryData(dict as KbbiApiResponse);
       }
-      const [syl, th, rhy] = await Promise.all([
-        sylRes.json(),
-        thRes.json(),
-        rhyRes.json(),
-      ]);
+      const sylD = syl as { data?: { syllables?: string[] } };
+      const thD = th as { data?: { synonyms?: string[] } };
+      const rhyD = rhy as { data?: { perfect?: string[] } };
       setToolkit({
-        syllables: syl?.data?.syllables ?? [],
-        synonyms: th?.data?.synonyms ?? [],
-        rhymes: rhy?.data?.perfect ?? [],
+        syllables: sylD?.data?.syllables ?? [],
+        synonyms: thD?.data?.synonyms ?? [],
+        rhymes: rhyD?.data?.perfect ?? [],
       });
     } catch (error) {
       const errResp = {
