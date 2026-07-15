@@ -1,6 +1,6 @@
 // Dictionary response shapes (KBBI + English WordNet) used by the standalone
-// DictionaryModal. Mirrors the shapes the Home page renders; kept separate so
-// the modal is self-contained and Home stays untouched.
+// DictionaryModal. Mirrors what the Home page renders; kept separate so the
+// modal is self-contained and Home stays untouched.
 
 export interface KbbiMeaning {
   id: number;
@@ -17,7 +17,18 @@ export interface KbbiEntry {
   lema?: string;
   nama?: string;
   keyword?: string;
+  kata_dasar?: string | string[];
+  bentuk_tidak_baku?: string | string[];
+  varian?: string | string[];
+  etimologi?:
+    | string
+    | { bahasa?: string; asal_kata?: string; pelafalan?: string; arti?: string[] }
+    | null;
   meanings: KbbiMeaning[];
+  kata_turunan?: string | string[];
+  gabungan_kata?: string | string[];
+  peribahasa?: string | string[];
+  idiom?: string | string[];
 }
 
 export interface KbbiApiResponse {
@@ -39,6 +50,8 @@ export interface EnglishEntry {
   display: string;
   pos_label: string;
   pronunciation: string | null;
+  forms: string[];
+  etymology: string | null;
   meanings: EnglishMeaning[];
 }
 
@@ -54,7 +67,9 @@ export const entryLema = (entry: KbbiEntry): string =>
   entry.lema || entry.nama || entry.keyword || "";
 
 /** A field that may be a real array or a JSON-encoded array string. */
-export const toArray = (field: string | string[] | undefined): string[] => {
+export const parseJsonArray = (
+  field: string | string[] | undefined
+): string[] => {
   if (Array.isArray(field)) return field;
   if (typeof field === "string") {
     const s = field.trim();
@@ -70,3 +85,22 @@ export const toArray = (field: string | string[] | undefined): string[] => {
   }
   return [];
 };
+
+export type Kelas = { kode: string; nama: string; deskripsi: string };
+
+/** Word-class field: a real array or a JSON-encoded array string. */
+export const parseKelasArray = (
+  field: string | Kelas[] | undefined
+): Array<string | Kelas> => {
+  if (Array.isArray(field)) return field;
+  if (typeof field !== "string" || !field) return [];
+  try {
+    const parsed = JSON.parse(field);
+    return Array.isArray(parsed) ? parsed : [field];
+  } catch {
+    return [field];
+  }
+};
+
+/** Envelope shape for the toolkit endpoints (syllable / thesaurus). */
+export type ToolkitEnvelope = { data?: Record<string, string[]> };
